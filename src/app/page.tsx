@@ -59,7 +59,7 @@ export default function Component() {
               </Link>
             </div>
             <div className="flex items-center space-x-4">
-              <Link href="https://github.com" className="text-gray-400 hover:text-green-400 transition-colors">
+              <Link href="https://github.com/jasonkradams/jadams.pw" className="text-gray-400 hover:text-green-400 transition-colors">
                 <Github className="w-5 h-5" />
               </Link>
               <Link href="https://twitter.com" className="text-gray-400 hover:text-green-400 transition-colors">
@@ -236,6 +236,40 @@ export default function Component() {
         </div>
       </section>
 
+      {/* Contact Section */}
+      <section id="contact" className="py-20 px-4 bg-gray-950">
+        <div className="container mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-bold mb-4 text-green-400">{"$ mail --contact"}</h2>
+          <p className="text-gray-400 mb-8 leading-relaxed">
+            Want to get in touch? Fill out the form below or email me directly at <a href="mailto:hello@jadams.pw" className="text-green-400 underline">hello@jadams.pw</a>.
+          </p>
+          <form className="space-y-6 max-w-md mx-auto">
+            <input
+              type="text"
+              name="name"
+              placeholder="Your Name"
+              className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:border-green-500"
+              required
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Your Email"
+              className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:border-green-500"
+              required
+            />
+            <textarea
+              name="message"
+              placeholder="Your Message"
+              rows={5}
+              className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:border-green-500"
+              required
+            />
+            <Button className="bg-green-500 hover:bg-green-600 text-gray-950 font-semibold px-6 w-full">Send Message</Button>
+          </form>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="border-t border-gray-800 py-12 px-4">
         <div className="container mx-auto max-w-6xl">
@@ -271,7 +305,7 @@ export default function Component() {
             <div>
               <h3 className="font-semibold mb-4 text-green-400">Connect</h3>
               <div className="flex space-x-4">
-                <Link href="https://github.com" className="text-gray-400 hover:text-green-400 transition-colors">
+                <Link href="https://github.com/jasonkradams/jadams.pw" className="text-gray-400 hover:text-green-400 transition-colors">
                   <Github className="w-6 h-6" />
                 </Link>
                 <Link href="https://twitter.com" className="text-gray-400 hover:text-green-400 transition-colors">
