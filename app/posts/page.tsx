@@ -26,7 +26,7 @@ export default function PostsPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {post.tags.map((tag, tagIndex) => (
+                  {(post.tags || []).map((tag, tagIndex) => (
                     <Badge
                       key={tagIndex}
                       variant="secondary"

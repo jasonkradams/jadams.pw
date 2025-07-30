@@ -11,8 +11,9 @@ export async function generateStaticParams() {
   return getAllPosts().map(post => ({ slug: post.slug }));
 }
 
-export default async function PostPage({ params }: { params: { slug: string } }) {
-  const postPath = path.join(process.cwd(), 'app/posts', `${params.slug}.mdx`);
+export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const postPath = path.join(process.cwd(), 'app/posts', `${slug}.mdx`);
   if (!fs.existsSync(postPath)) return notFound();
   const source = fs.readFileSync(postPath, 'utf-8');
   const { content, data } = matter(source);
