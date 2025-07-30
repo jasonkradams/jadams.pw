@@ -3,72 +3,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Github, Twitter, Linkedin, Mail, Calendar, Clock, ArrowRight } from "lucide-react"
 import Link from "next/link"
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import { getAllPosts, type BlogPostMeta } from "./posts/blog-index";
 
-export default function Component() {
-  const blogPosts = [
-    {
-      title: "Building Scalable APIs with Node.js and TypeScript",
-      excerpt:
-        "Learn how to architect robust backend services using modern JavaScript technologies and best practices for production environments.",
-      date: "2024-01-15",
-      readTime: "8 min read",
-      tags: ["Node.js", "TypeScript", "API Design"],
-    },
-    {
-      title: "Advanced React Patterns: Compound Components",
-      excerpt:
-        "Explore advanced React patterns that will make your components more flexible, reusable, and maintainable in large applications.",
-      date: "2024-01-10",
-      readTime: "12 min read",
-      tags: ["React", "JavaScript", "Design Patterns"],
-    },
-    {
-      title: "Database Optimization Techniques for High-Traffic Apps",
-      excerpt:
-        "Deep dive into database indexing, query optimization, and caching strategies to handle millions of requests efficiently.",
-      date: "2024-01-05",
-      readTime: "15 min read",
-      tags: ["Database", "Performance", "PostgreSQL"],
-    },
-  ]
+export default async function Component() {
+  const blogPosts: BlogPostMeta[] = getAllPosts()
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 3);
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 font-mono">
-      {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-950/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <nav className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-green-500 rounded-sm flex items-center justify-center">
-                <span className="text-gray-950 font-bold text-sm">{"</>"}</span>
-              </div>
-              <span className="text-xl font-bold text-green-400">jadams.pw</span>
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <Link href="#home" className="text-gray-300 hover:text-green-400 transition-colors">
-                ~/home
-              </Link>
-              <Link href="#posts" className="text-gray-300 hover:text-green-400 transition-colors">
-                ~/posts
-              </Link>
-              <Link href="#about" className="text-gray-300 hover:text-green-400 transition-colors">
-                ~/about
-              </Link>
-              <Link href="#contact" className="text-gray-300 hover:text-green-400 transition-colors">
-                ~/contact
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link href="https://github.com/jasonkradams/jadams.pw" className="text-gray-400 hover:text-green-400 transition-colors">
-                <Github className="w-5 h-5" />
-              </Link>
-              <Link href="https://twitter.com" className="text-gray-400 hover:text-green-400 transition-colors">
-                <Twitter className="w-5 h-5" />
-              </Link>
-            </div>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       {/* Hero Section */}
       <section id="home" className="py-20 px-4">
@@ -109,17 +55,12 @@ export default function Component() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {blogPosts.map((post, index) => (
-              <Card
-                key={index}
-                className="bg-gray-800 border-gray-700 hover:border-green-500/50 transition-all duration-300 group"
-              >
+            {blogPosts.map((post: BlogPostMeta, index: number) => (
+              <Card key={index} className="bg-gray-800 border-gray-700 hover:border-green-500/50 transition-all duration-300 group">
                 <CardHeader>
                   <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
-                    <Calendar className="w-4 h-4" />
                     <span>{new Date(post.date).toLocaleDateString()}</span>
-                    <Clock className="w-4 h-4 ml-2" />
-                    <span>{post.readTime}</span>
+                    {post.readTime && <span className="ml-2">{post.readTime}</span>}
                   </div>
                   <CardTitle className="text-gray-100 group-hover:text-green-400 transition-colors">
                     {post.title}
@@ -128,7 +69,7 @@ export default function Component() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {post.tags.map((tag, tagIndex) => (
+                    {(post.tags || []).map((tag: string, tagIndex: number) => (
                       <Badge
                         key={tagIndex}
                         variant="secondary"
@@ -138,23 +79,26 @@ export default function Component() {
                       </Badge>
                     ))}
                   </div>
-                  <Button variant="ghost" className="text-green-400 hover:text-green-300 hover:bg-green-500/10 p-0">
+                  <Link href={`/posts/${post.slug}`} className="text-green-400 hover:text-green-300 hover:underline">
                     Read more →
-                  </Button>
+                  </Link>
                 </CardContent>
               </Card>
             ))}
           </div>
 
           <div className="text-center mt-12">
-            <Button variant="outline" className="border-green-500 text-green-400 hover:bg-green-500/10 bg-transparent">
-              View All Posts
-            </Button>
+            <Link href="/posts" passHref legacyBehavior>
+              <Button variant="outline" className="border-green-500 text-green-400 hover:bg-green-500/10 bg-transparent">
+                View All Posts
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
       {/* About Section */}
+      <Footer />
       <section id="about" className="py-20 px-4">
         <div className="container mx-auto max-w-4xl">
           <div className="grid md:grid-cols-2 gap-12 items-center">

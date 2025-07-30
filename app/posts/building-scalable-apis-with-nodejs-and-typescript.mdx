@@ -1,0 +1,51 @@
+---
+title: "Building Scalable APIs with Node.js and TypeScript"
+date: "2024-01-15"
+readTime: "8 min read"
+tags:
+  - Node.js
+  - TypeScript
+  - API Design
+---
+
+# Building Scalable APIs with Node.js and TypeScript
+
+In this article, we'll explore how to architect robust backend services using modern JavaScript technologies and best practices for production environments.
+
+## Why Node.js + TypeScript?
+Node.js offers a non-blocking, event-driven architecture that's ideal for scalable APIs. TypeScript adds static typing, improved tooling, and better maintainability.
+
+## Key Topics
+- Project structure for scalability
+- Type safety and DTOs
+- Express.js with TypeScript
+- Error handling and validation
+- Testing strategies
+- Production deployment tips
+
+## Example: Express.js API with TypeScript
+```ts
+import express from 'express';
+import type { Request, Response } from 'express';
+
+const app = express();
+app.use(express.json());
+
+app.get('/api/hello', (req: Request, res: Response) => {
+  res.json({ message: 'Hello, world!' });
+});
+
+app.listen(3000, () => {
+  console.log('API running on http://localhost:3000');
+});
+```
+
+## Best Practices
+- Use environment variables for config
+- Validate all input (e.g. with zod or joi)
+- Write integration and unit tests
+- Use Docker for local dev and deployment
+- Monitor with tools like Prometheus/Grafana
+
+## Conclusion
+Node.js and TypeScript are a powerful combo for building scalable APIs. With the right structure and practices, you can deliver robust, maintainable, and production-ready services.
