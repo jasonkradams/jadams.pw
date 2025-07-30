@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Github, Twitter, Linkedin, Mail, Calendar, Clock, ArrowRight } from "lucide-react"
+import { Github, Twitter, Linkedin, Mail, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import Header from "./components/Header";
 import Footer from "./components/Footer";
