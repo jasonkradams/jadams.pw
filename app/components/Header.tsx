@@ -1,7 +1,11 @@
+"use client";
 import Link from "next/link";
-import { Github, Twitter } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { SiGithub, SiX } from "react-icons/si";
 
 export default function Header() {
+  const pathname = usePathname();
+
   return (
     <header className="border-b border-gray-800 bg-gray-950/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
@@ -18,7 +22,10 @@ export default function Header() {
             <Link href="/#home" className="text-gray-300 hover:text-green-400 transition-colors">
               ~/home
             </Link>
-            <Link href="/#posts" className="text-gray-300 hover:text-green-400 transition-colors">
+            <Link
+              href={pathname === "/" ? "#posts" : "/posts"}
+              className="text-gray-300 hover:text-green-400 transition-colors"
+            >
               ~/posts
             </Link>
             <Link href="/#about" className="text-gray-300 hover:text-green-400 transition-colors">
@@ -29,11 +36,11 @@ export default function Header() {
             </Link>
           </div>
           <div className="flex items-center space-x-4">
-            <Link href="https://github.com/jasonkradams/jadams.pw" className="text-gray-400 hover:text-green-400 transition-colors">
-              <Github className="w-5 h-5" />
+            <Link href="https://github.com/jasonkradams/jadams.pw" className="text-gray-400 hover:text-green-400 transition-colors" aria-label="GitHub">
+              <SiGithub className="w-5 h-5" />
             </Link>
-            <Link href="https://twitter.com" className="text-gray-400 hover:text-green-400 transition-colors">
-              <Twitter className="w-5 h-5" />
+            <Link href="https://twitter.com" className="text-gray-400 hover:text-green-400 transition-colors" aria-label="X (Twitter)">
+              <SiX className="w-5 h-5" />
             </Link>
           </div>
         </nav>

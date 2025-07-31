@@ -9,4 +9,4 @@ build:
 	npx next build || exit 1
 
 clean:
-	rm -rf .next
+	rm -rf .next out/
