@@ -13,8 +13,10 @@ export async function generateStaticParams() {
   return getAllPosts().map(post => ({ slug: post.slug }));
 }
 
-export default async function PostPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function PostPage({ params }: { params: { slug: string } | Promise<{ slug: string }> }) {
+  // Handle both direct params and Promise<params>
+  const resolvedParams = await Promise.resolve(params);
+  const { slug } = resolvedParams;
   const postPath = path.join(process.cwd(), 'app/posts', `${slug}.mdx`);
   
   if (!fs.existsSync(postPath)) return notFound();
