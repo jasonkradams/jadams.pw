@@ -38,7 +38,7 @@ export const mdxComponents: MDXComponents = {
   pre: ({ children }) => {
     // If the child is a code element with a language class, pass it through
     if (typeof children === 'object' && children && 'props' in children) {
-      const codeElement = children as any;
+      const codeElement = children as { props: { className?: string; children: string; [key: string]: unknown } };
       if (codeElement.props?.className?.startsWith('language-')) {
         return <CodeBlock {...codeElement.props}>{codeElement.props.children}</CodeBlock>;
       }
