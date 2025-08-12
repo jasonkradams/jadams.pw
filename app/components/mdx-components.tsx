@@ -1,4 +1,5 @@
 import type { MDXComponents } from 'mdx/types';
+import CodeBlock from './CodeBlock';
 
 // Define MDX components as a regular object
 export const mdxComponents: MDXComponents = {
@@ -20,15 +21,34 @@ export const mdxComponents: MDXComponents = {
       {children}
     </a>
   ),
-  code: ({ children }) => (
-    <code className="bg-gray-800 px-1.5 py-0.5 rounded text-sm font-mono">
-      {children}
-    </code>
-  ),
-  pre: ({ children }) => (
-    <pre className="bg-gray-900 p-4 rounded-lg overflow-x-auto my-6 text-sm">
-      {children}
-    </pre>
-  ),
+  // Inline code (not in pre blocks)
+  code: ({ children, className, ...props }) => {
+    // If it's part of a pre block (syntax highlighted), use our CodeBlock component
+    if (className?.startsWith('language-')) {
+      return <CodeBlock className={className} {...props}>{children}</CodeBlock>;
+    }
+    // Otherwise, style as inline code
+    return (
+      <code className="bg-gray-800 px-1.5 py-0.5 rounded text-sm font-mono text-green-300">
+        {children}
+      </code>
+    );
+  },
+  // Pre blocks for code - let the code component handle it
+  pre: ({ children }) => {
+    // If the child is a code element with a language class, pass it through
+    if (typeof children === 'object' && children && 'props' in children) {
+      const codeElement = children as any;
+      if (codeElement.props?.className?.startsWith('language-')) {
+        return <CodeBlock {...codeElement.props}>{codeElement.props.children}</CodeBlock>;
+      }
+    }
+    // Otherwise, render as a regular pre block
+    return (
+      <pre className="bg-gray-900 p-4 rounded-lg overflow-x-auto my-6 text-sm">
+        {children}
+      </pre>
+    );
+  },
   // Add more components as needed
 };

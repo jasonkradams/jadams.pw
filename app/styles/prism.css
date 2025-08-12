@@ -1,0 +1,184 @@
+/* Highlight.js Dark Theme for Syntax Highlighting */
+/* Based on VS Code Dark+ theme */
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1rem;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  border-radius: 8px;
+  border: 1px solid #333;
+  margin: 1.5rem 0;
+  font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', Consolas, 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Inline code styling */
+:not(pre) > code {
+  background: #2d2d2d;
+  color: #d4d4d4;
+  padding: 0.2em 0.4em;
+  border-radius: 0.3em;
+  font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', Consolas, 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+/* Comments */
+.hljs-comment,
+.hljs-quote {
+  color: #6a9955;
+  font-style: italic;
+}
+
+/* Keywords */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal {
+  color: #569cd6;
+  font-weight: bold;
+}
+
+/* Strings */
+.hljs-string,
+.hljs-doctag {
+  color: #ce9178;
+}
+
+/* Numbers */
+.hljs-number {
+  color: #b5cea8;
+}
+
+/* Functions */
+.hljs-title,
+.hljs-section {
+  color: #dcdcaa;
+  font-weight: bold;
+}
+
+/* Variables and attributes */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute {
+  color: #9cdcfe;
+}
+
+/* Types and classes */
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #4ec9b0;
+}
+
+/* Built-ins */
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #4ec9b0;
+}
+
+/* Operators and punctuation */
+.hljs-operator,
+.hljs-punctuation {
+  color: #d4d4d4;
+}
+
+/* Meta and preprocessor */
+.hljs-meta,
+.hljs-meta-keyword {
+  color: #569cd6;
+}
+
+.hljs-meta-string {
+  color: #ce9178;
+}
+
+/* Tags (HTML/XML) */
+.hljs-tag {
+  color: #569cd6;
+}
+
+.hljs-tag .hljs-name,
+.hljs-tag .hljs-attr {
+  color: #9cdcfe;
+}
+
+.hljs-tag .hljs-string {
+  color: #ce9178;
+}
+
+/* CSS selectors and properties */
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+  color: #d7ba7d;
+}
+
+.hljs-property {
+  color: #9cdcfe;
+}
+
+/* Regular expressions */
+.hljs-regexp {
+  color: #fd971f;
+}
+
+/* Symbols */
+.hljs-symbol {
+  color: #f92672;
+}
+
+/* Emphasis */
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+/* Deletions and additions */
+.hljs-deletion {
+  background: #3c2626;
+}
+
+.hljs-addition {
+  background: #2b3328;
+}
+
+/* Language-specific adjustments */
+
+/* JavaScript/TypeScript */
+.hljs-title.function_ {
+  color: #dcdcaa;
+}
+
+.hljs-params {
+  color: #9cdcfe;
+}
+
+/* JSON */
+.language-json .hljs-attr {
+  color: #9cdcfe;
+}
+
+/* Shell/Bash */
+.language-bash .hljs-built_in,
+.language-shell .hljs-built_in {
+  color: #dcdcaa;
+}
+
+/* Python */
+.language-python .hljs-decorator {
+  color: #dcdcaa;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .hljs {
+    font-size: 13px;
+    padding: 0.75rem;
+    margin: 1rem 0;
+  }
+}
