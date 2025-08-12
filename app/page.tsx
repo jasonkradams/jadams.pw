@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Github, Linkedin, Mail, ArrowRight } from "lucide-react"
+import { Mail, ArrowRight } from "lucide-react"
+import { SiGithub, SiLinkedin } from "react-icons/si"
 import Link from "next/link"
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -141,7 +142,7 @@ export default async function Component() {
                   asChild
                 >
                   <Link href="https://www.linkedin.com/in/jasonkradams/" target="_blank" rel="noopener noreferrer">
-                    <Linkedin className="w-4 h-4 mr-2" />
+                    <SiLinkedin className="w-4 h-4 mr-2" />
                     Connect on LinkedIn
                   </Link>
                 </Button>
@@ -250,10 +251,10 @@ export default async function Component() {
               <h3 className="font-semibold mb-4 text-green-400">Connect</h3>
               <div className="flex space-x-4">
                 <Link href="https://github.com/jasonkradams/jadams.pw" className="text-gray-400 hover:text-green-400 transition-colors">
-                  <Github className="w-6 h-6" />
+                  <SiGithub className="w-6 h-6" />
                 </Link>
                 <Link href="https://linkedin.com" className="text-gray-400 hover:text-green-400 transition-colors">
-                  <Linkedin className="w-6 h-6" />
+                  <SiLinkedin className="w-6 h-6" />
                 </Link>
                 <Link href="mailto:hello@example.com" className="text-gray-400 hover:text-green-400 transition-colors">
                   <Mail className="w-6 h-6" />
@@ -262,7 +263,7 @@ export default async function Component() {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>{"© 2024 jadams.pw. Built with Next.js and hosted on GitHub Pages."}</p>
+            <p>{"© 2025 jadams.pw. Built with Next.js and hosted on GitHub Pages."}</p>
           </div>
         </div>
       </footer>
