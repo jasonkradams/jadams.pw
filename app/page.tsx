@@ -258,7 +258,7 @@ export default async function Component() {
                 <Link href="https://linkedin.com" className="text-gray-400 hover:text-green-400 transition-colors">
                   <Linkedin className="w-6 h-6" />
                 </Link>
-                <Link href="mailto:hello@example.com" className="text-gray-400 hover:text-green-400 transition-colors">
+                <Link href="mailto:jason.k.r.adams@gmail.com" className="text-gray-400 hover:text-green-400 transition-colors">
                   <Mail className="w-6 h-6" />
                 </Link>
               </div>
