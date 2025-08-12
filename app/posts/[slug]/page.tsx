@@ -13,10 +13,9 @@ export async function generateStaticParams() {
   return getAllPosts().map(post => ({ slug: post.slug }));
 }
 
-export default async function PostPage({ params }: { params: { slug: string } | Promise<{ slug: string }> }) {
-  // Handle both direct params and Promise<params>
-  const resolvedParams = await Promise.resolve(params);
-  const { slug } = resolvedParams;
+export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
+  // In Next.js 15, params is a Promise that needs to be awaited
+  const { slug } = await params;
   const postPath = path.join(process.cwd(), 'app/posts', `${slug}.mdx`);
   
   if (!fs.existsSync(postPath)) return notFound();
