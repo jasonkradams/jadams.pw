@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SiGithub, SiX } from "react-icons/si";
+import { SiGithub } from "react-icons/si";
 
 export default function Header() {
   const pathname = usePathname();
@@ -38,9 +38,6 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             <Link href="https://github.com/jasonkradams/jadams.pw" className="text-gray-400 hover:text-green-400 transition-colors" aria-label="GitHub">
               <SiGithub className="w-5 h-5" />
-            </Link>
-            <Link href="https://twitter.com" className="text-gray-400 hover:text-green-400 transition-colors" aria-label="X (Twitter)">
-              <SiX className="w-5 h-5" />
             </Link>
           </div>
         </nav>

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Github, Twitter, Linkedin, Mail, ArrowRight } from "lucide-react"
+import { Github, Linkedin, Mail, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -252,13 +252,10 @@ export default async function Component() {
                 <Link href="https://github.com/jasonkradams/jadams.pw" className="text-gray-400 hover:text-green-400 transition-colors">
                   <Github className="w-6 h-6" />
                 </Link>
-                <Link href="https://twitter.com" className="text-gray-400 hover:text-green-400 transition-colors">
-                  <Twitter className="w-6 h-6" />
-                </Link>
                 <Link href="https://linkedin.com" className="text-gray-400 hover:text-green-400 transition-colors">
                   <Linkedin className="w-6 h-6" />
                 </Link>
-                <Link href="mailto:jason.k.r.adams@gmail.com" className="text-gray-400 hover:text-green-400 transition-colors">
+                <Link href="mailto:hello@example.com" className="text-gray-400 hover:text-green-400 transition-colors">
                   <Mail className="w-6 h-6" />
                 </Link>
               </div>
