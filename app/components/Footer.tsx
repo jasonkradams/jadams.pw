@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { Github, Linkedin, Mail } from "lucide-react"
+import { Mail } from "lucide-react"
+import { SiGithub, SiLinkedin } from "react-icons/si"
 
 export default function Footer() {
   return (
@@ -38,10 +39,10 @@ export default function Footer() {
               <h3 className="font-semibold mb-4 text-green-400">Connect</h3>
               <div className="flex space-x-4">
                 <Link href="https://github.com/jasonkradams/jadams.pw" className="text-gray-400 hover:text-green-400 transition-colors">
-                  <Github className="w-6 h-6" />
+                  <SiGithub className="w-6 h-6" />
                 </Link>
                 <Link href="https://linkedin.com" className="text-gray-400 hover:text-green-400 transition-colors">
-                  <Linkedin className="w-6 h-6" />
+                  <SiLinkedin className="w-6 h-6" />
                 </Link>
                 <Link href="mailto:hello@example.com" className="text-gray-400 hover:text-green-400 transition-colors">
                   <Mail className="w-6 h-6" />

@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Linkedin, ArrowRight } from "lucide-react"
+import { ArrowRight } from "lucide-react"
+import { SiLinkedin } from "react-icons/si"
 import Link from "next/link"
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -140,7 +141,7 @@ export default async function Component() {
                   asChild
                 >
                   <Link href="https://www.linkedin.com/in/jasonkradams/" target="_blank" rel="noopener noreferrer">
-                    <Linkedin className="w-4 h-4 mr-2" />
+                    <SiLinkedin className="w-4 h-4 mr-2" />
                     Connect on LinkedIn
                   </Link>
                 </Button>
