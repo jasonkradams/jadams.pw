@@ -33,10 +33,12 @@ export default async function Component() {
             the latest in tech. Join me on this journey of continuous learning.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-green-500 hover:bg-green-600 text-gray-950 font-semibold px-8 py-3">
-              Read Latest Posts
-              <ArrowRight className="ml-2 w-4 h-4" />
-            </Button>
+            <Link href="/posts" passHref legacyBehavior>
+              <Button className="bg-green-500 hover:bg-green-600 text-gray-950 font-semibold px-8 py-3">
+                Read Latest Posts
+                <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
+            </Link>
             <Button
               variant="outline"
               className="border-gray-600 text-gray-300 hover:bg-gray-800 px-8 py-3 bg-transparent"

@@ -31,6 +31,9 @@ export default function Header() {
             <Link href="/#about" className="text-gray-300 hover:text-green-400 transition-colors">
               ~/about
             </Link>
+            <Link href="/now" className="text-gray-300 hover:text-green-400 transition-colors">
+              ~/now
+            </Link>
             <Link href="/#contact" className="text-gray-300 hover:text-green-400 transition-colors">
               ~/contact
             </Link>

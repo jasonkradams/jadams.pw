@@ -21,14 +21,17 @@ export default function Footer() {
             <div>
               <h3 className="font-semibold mb-4 text-green-400">Quick Links</h3>
               <div className="space-y-2">
-                <Link href="#home" className="block text-gray-400 hover:text-green-400 transition-colors">
+                <Link href="/" className="block text-gray-400 hover:text-green-400 transition-colors">
                   Home
                 </Link>
-                <Link href="#posts" className="block text-gray-400 hover:text-green-400 transition-colors">
+                <Link href="/#posts" className="block text-gray-400 hover:text-green-400 transition-colors">
                   Blog Posts
                 </Link>
-                <Link href="#about" className="block text-gray-400 hover:text-green-400 transition-colors">
+                <Link href="/#about" className="block text-gray-400 hover:text-green-400 transition-colors">
                   About
+                </Link>
+                <Link href="/now" className="block text-gray-400 hover:text-green-400 transition-colors">
+                  Now
                 </Link>
                 <Link href="/rss" className="block text-gray-400 hover:text-green-400 transition-colors">
                   RSS Feed
