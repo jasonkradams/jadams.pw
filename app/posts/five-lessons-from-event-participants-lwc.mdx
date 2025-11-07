@@ -1,0 +1,69 @@
+---
+title: "Five Lessons from Shipping a Salesforce Event Participants LWC"
+date: "2025-11-07"
+readTime: "9 min read"
+tags:
+  - Salesforce
+  - Lightning Web Components
+  - Experience Cloud
+  - Integrations
+---
+
+# Five Lessons from Shipping a Salesforce Event Participants LWC
+
+While building a custom Event Participants Lightning Web Component (LWC) for the Spokane Mountaineers integration work, we ran head-first into the joys and hazards of Experience Cloud, Apex security, and LWC reactivity. Here's what landed in `main` and what we learned along the way.
+
+## 1. Start With a Shared Data Contract
+We introduced a `ParticipantWrapper` in Apex so the client and server speak the same language—every participant arrives with IDs, contact details, user lookup, and response metadata. Because the wrapper always returns a stable `eventRelationId`, the LWC can render keyed rows reliably, even when Salesforce hides 15-character IDs behind Experience Cloud-friendly URLs.
+
+For integrations that span multiple surfaces (standard Lightning, Experience Cloud, Flow automation), establishing this contract early eliminates a lot of hand-waving later. It also gave us a single place to normalize defaults like `response = 'Attending'`.
+
+## 2. Authorize Capabilities on the Server First
+Allowing event leaders to add, remove, and edit participants needed more than conditional buttons; Apex had to enforce the rules. The helper checks leader status on every mutating call and exposes a `TEST_BYPASS_LEADER_CHECK` seam so unit tests can focus on behavior without inventing fake leadership hierarchies.
+
+```javascript
+    public static Boolean isEventLeader(String eventRegistrationId) {
+        try {
+            if (Test.isRunningTest() && TEST_BYPASS_LEADER_CHECK) {
+                return true;
+            }
+
+            Id currentUserId = UserInfo.getUserId();
+            List<Event_Registration__c> eventRegs = [
+                SELECT Id, Leader__c
+                FROM Event_Registration__c
+                WHERE Id = :eventRegistrationId
+                AND Leader__c = :currentUserId
+                LIMIT 1
+            ];
+
+            return !eventRegs.isEmpty();
+        } catch (Exception e) {
+            System.debug('Error checking event leader status: ' + e.getMessage());
+            return false;
+        }
+    }
+```
+
+This server-first authorization let the LWC stay optimistic (showing add/remove controls when `isEventLeader` is true) without trusting the UI to protect data.
+
+## 3. Make ID Discovery Experience Cloud-Friendly
+Experience Cloud rewrites URLs in ways that break traditional related lists. The component now hunts for an event identifier in the Lightning page reference, the query string, and path segments like `/s/event-registration/{id}/name`. It also tries the 15- and 18-character variants plus the `00U` conversion Salesforce applies to `Event_Registration__c`.
+
+This defensive ID discovery prevented blank states and gave us single-component support across admin console pages, community sites, and deep-linked invitation emails.
+
+## 4. Defend Against Duplicate Loads and Stale State
+Early versions spammed `getEventParticipants` on every navigation change, producing racing promises and temporary empty states. We added `_isLoadingParticipants` and `_foundWorkingId` flags, always cloned arrays on update, and deferred state mutations until after the spinner cleared.
+
+That small amount of state discipline eliminated flicker, removed double toasts, and ensured the modal could reuse the current participant list without extra server trips.
+
+## 5. Build Test Seams Before You Need Them
+Salesforce tests can be brittle when flows or community configuration enter the picture. We leaned on test seams (`TEST_SIMULATE_EVENT_REG`, `TEST_FAKE_REGS`, `TEST_BYPASS_LEADER_CHECK`) to stub out external dependencies and keep the unit test suite focused on logic. Combined with targeted `Database.insert(... allOrNone=false)`, the suite creates realistic data, covers new Apex branches above 75%, and guards the integration boundaries.
+
+## Bonus: UX Polish Sells the Feature
+Matched styling to Salesforce's related list, gave leaders a `lightning-record-picker` modal, wired the "View Profile" link to Experience Cloud, and added empty/error states. None of that shows up in coverage numbers, but it dramatically improved trust in the component—and made the security and data work visible to stakeholders.
+
+---
+
+Shipping this LWC reminded us that successful Salesforce integrations hinge on predictable contracts, server-side enforcement, and Experience Cloud-specific resilience. If you're bolting custom features into the platform, map those three pillars first; the rest of the stack gets a lot calmer.
+
