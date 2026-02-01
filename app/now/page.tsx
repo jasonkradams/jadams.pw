@@ -41,23 +41,7 @@ export default function NowPage() {
               <span className="text-green-400 mt-1">→</span>
               <div>
                 <p className="text-gray-300 leading-relaxed">
-                  Seeking employment as a <span className="text-green-400 font-semibold">Senior Software Engineer</span>
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="text-green-400 mt-1">→</span>
-              <div>
-                <p className="text-gray-300 leading-relaxed">
-                  Building{" "}
-                  <a 
-                    href="https://real-staging.ai" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-green-400 hover:text-green-300 underline"
-                  >
-                    real-staging.ai
-                  </a>
+                  Working at <span className="text-green-400 font-semibold">OpenEye</span> as a <span className="text-green-400 font-semibold">Site Reliability Engineer II</span>
                 </p>
               </div>
             </div>
@@ -77,7 +61,7 @@ export default function NowPage() {
               <span className="text-green-400 mt-1">→</span>
               <div>
                 <p className="text-gray-300 leading-relaxed">
-                  Raising two children <Badge className="bg-gray-700 text-gray-300 border border-gray-600 ml-2">(1 and 3)</Badge>
+                  Raising two children <Badge className="bg-gray-700 text-gray-300 border border-gray-600 ml-2">(1 and 4)</Badge>
                 </p>
               </div>
             </div>
