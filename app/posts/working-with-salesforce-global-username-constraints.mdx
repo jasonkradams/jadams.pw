@@ -1,0 +1,104 @@
+---
+title: "Working with Salesforce Global Username Constraints"
+date: "2026-02-07"
+readTime: "7 min read"
+tags:
+  - Salesforce
+  - Experience Cloud
+  - Authentication
+---
+
+# Working with Salesforce Global Username Constraints
+
+## Overview
+
+In this article we will talk about the constraint of having to maintain a globally unique username in Salesforce, the
+challenges that has presented, and the solution we developed to overcome them.
+
+## The People Challenge
+
+The primary challenge was that the Spokane Mountaineers site was delivered in a state where members register with their
+email address, but their username was created as `"jane@doe.com" + ".smi"`. This made the login process confusing for
+existing and new members. Even today, five years after deployment, this remains a point of confusion.
+
+## The Goal
+
+The goal was to allow our members to log in with their email address and forget all about the globally-unique suffix.
+They shouldn't need to care about such technical details. It's inconsistent with all other platforms and is frankly
+annoying and unprofessional.
+
+## The Technical Challenge
+
+Salesforce requires usernames to be globally unique across all orgs. That means `jane@doe.com` in your Experience Cloud
+site could collide with the same address in another Salesforce customer's org. The implementing consulting agency used a
+ `.smi` suffix (for "Spokane Mountaineers Inc") to namespace our users: `jane@doe.com.smi`.
+
+We initially explored migrating away from the suffix entirely. Research quickly showed that wasn't viable; Salesforce's
+username model is baked into the platform. There's no way to change an existing username format across hundreds of
+accounts without risking a username collision with a subset of members. The global namespace constraint isn't going away.
+
+The standard Experience Cloud login page is simple to configure but offers zero customization. We couldn't intercept or
+transform the username before authentication. If we were going to support our membership logging in with just their
+email, we needed a custom solution.
+
+## The Solution
+
+We chose to create custom Visualforce pages for both the Login and Forgot Password experiences. These pages allow us to
+intercept the username as it's entered and append `.smi` when it's missing; making the suffix transparent to users while
+satisfying Salesforce's requirements behind the scenes.
+
+### Implementation: The normalizeUsername Method
+
+The heart of the solution is a small Apex method that normalizes the username before passing it to `Site.login()` or
+`Site.forgotPassword()`:
+
+```apex
+private String normalizeUsername(String rawUsername) {
+  if (String.isBlank(rawUsername)) {
+    return rawUsername;
+  }
+
+  // Append .smi suffix if not already present (case insensitive)
+  if (!rawUsername.endsWithIgnoreCase('.smi')) {
+    return rawUsername + '.smi';
+  }
+
+  return rawUsername;
+}
+```
+
+We deliberately chose to append rather than strip. Stripping would have required users to know their "real" username
+included `.smi`, defeating the purpose. Appending lets members type what they know: their email address.
+
+In the login controller, normalization happens right before authentication:
+
+```apex
+// Normalize username: append .smi suffix if not present
+String normalizedUsername = normalizeUsername(username.trim());
+
+// Attempt authentication with normalized username
+PageReference result = Site.login(normalizedUsername, password, startUrl);
+```
+
+The same logic runs in the forgot password flow, so members can reset their password using only their email. We also
+follow a security best practice on the forgot password page: we always show a success message regardless of whether the
+account exists, to avoid revealing valid usernames to an attacker.
+
+## Key Lessons
+
+Sometimes the best solution is transparency, not migration. We couldn't change how Salesforce stores usernames, but we
+could change how users interact with them. A few lines of normalization logic made the platform constraint invisible.
+
+Custom Visualforce pages offered flexibility that the standard Experience Cloud login page simply doesn't provide. The
+tradeoff is maintaining our own auth surfaces, but for our use case it was worth it.
+
+Consistency between login and password reset is critical. Members who can log in with their email but must remember
+`.smi` for password reset would be rightfully frustrated. Both flows use the same `normalizeUsername` logic.
+
+## Read On
+
+You can read more about the technical challenges and implementation on our docs site below.
+
+- [Migrating to Email-Based Login: Supporting .smi Username Suffix Transparently](https://jasonkradams.github.io/smi/articles/simplifying-custom-login-experience/)
+- [Custom Login Page Implementation Details](https://jasonkradams.github.io/smi/implementation/custom-login-page-implementation/)
+- [Configure Custom Login Page for Experience Cloud](https://jasonkradams.github.io/smi/how-to-guides/configure-custom-login-page/)
