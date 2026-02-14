@@ -33,12 +33,12 @@ export default async function Component() {
             the latest in tech. Join me on this journey of continuous learning.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/posts" passHref legacyBehavior>
-              <Button className="bg-green-500 hover:bg-green-600 text-gray-950 font-semibold px-8 py-3">
+            <Button className="bg-green-500 hover:bg-green-600 text-gray-950 font-semibold px-8 py-3" asChild>
+              <Link href="/posts">
                 Read Latest Posts
                 <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
             <Button
               variant="outline"
               className="border-gray-600 text-gray-300 hover:bg-gray-800 px-8 py-3 bg-transparent"
@@ -91,11 +91,11 @@ export default async function Component() {
           </div>
 
           <div className="text-center mt-12">
-            <Link href="/posts" passHref legacyBehavior>
-              <Button variant="outline" className="border-green-500 text-green-400 hover:bg-green-500/10 bg-transparent">
+            <Button variant="outline" className="border-green-500 text-green-400 hover:bg-green-500/10 bg-transparent" asChild>
+              <Link href="/posts">
                 View All Posts
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
