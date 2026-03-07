@@ -4,16 +4,8 @@ import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { buildTagUrl } from '@/lib/utils';
+import { buildTagUrl, formatDuration } from '@/lib/utils';
 import type { RecipeMeta } from './recipes-index';
-
-function formatDuration(iso: string): string {
-  const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?/);
-  if (!match) return iso;
-  const hours = match[1] ? `${match[1]}h ` : '';
-  const mins = match[2] ? `${match[2]}min` : '';
-  return (hours + mins).trim() || iso;
-}
 
 export default function RecipeList({ recipes }: { recipes: RecipeMeta[] }) {
   const searchParams = useSearchParams();

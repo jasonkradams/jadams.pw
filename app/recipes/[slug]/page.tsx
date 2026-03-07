@@ -13,6 +13,7 @@ import RecipeViewer from '../../components/RecipeViewer';
 import { getAllRecipes } from '../recipes-index';
 import { mdxComponents } from '../../components/mdx-components';
 import { Badge } from '@/components/ui/badge';
+import { formatDuration } from '@/lib/utils';
 
 export async function generateStaticParams() {
   return getAllRecipes().map(recipe => ({ slug: recipe.slug }));
@@ -22,15 +23,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const recipe = getAllRecipes().find(r => r.slug === slug);
   return { title: recipe?.title ?? slug };
-}
-
-/** Convert ISO 8601 duration (e.g. "PT1H30M") to a readable string ("1h 30min") */
-function formatDuration(iso: string): string {
-  const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?/);
-  if (!match) return iso;
-  const hours = match[1] ? `${match[1]}h ` : '';
-  const mins = match[2] ? `${match[2]}min` : '';
-  return (hours + mins).trim() || iso;
 }
 
 /** Convert a recipe title to a Go-idiomatic PascalCase var name */
