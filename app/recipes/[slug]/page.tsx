@@ -101,7 +101,7 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
     mdxSource = await compileMDX({
       source: parsed.content,
       components: mdxComponents,
-      options: { parseFrontmatter: true, mdxOptions: { remarkPlugins: [remarkGfm] } },
+      options: { mdxOptions: { remarkPlugins: [remarkGfm] } },
     });
   } catch (error) {
     console.error('Error loading recipe:', error);

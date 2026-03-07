@@ -3,6 +3,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import { notFound } from 'next/navigation';
 import { compileMDX } from 'next-mdx-remote/rsc';
+import remarkGfm from 'remark-gfm';
 
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -37,7 +38,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
     mdxSource = await compileMDX({
       source: parsed.content,
       components: mdxComponents,
-      options: { parseFrontmatter: true },
+      options: { mdxOptions: { remarkPlugins: [remarkGfm] } },
     });
   } catch (error) {
     console.error('Error loading post:', error);
