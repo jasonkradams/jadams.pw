@@ -6,7 +6,7 @@ import { SiLinkedin } from "react-icons/si"
 import Link from "next/link"
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import { getAllPosts, type BlogPostMeta } from "./posts/blog-index";
+import { getAllPosts } from "./posts/blog-index";
 
 export default async function HomePage() {
   const blogPosts = getAllPosts().slice(0, 3);
