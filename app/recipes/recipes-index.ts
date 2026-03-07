@@ -12,6 +12,8 @@ export interface RecipeMeta {
   servings?: number;
   prepTime?: string;
   cookTime?: string;
+  ingredients?: string[];
+  instructions?: string[];
 }
 
 export function getAllRecipes(): RecipeMeta[] {
@@ -32,6 +34,8 @@ export function getAllRecipes(): RecipeMeta[] {
         servings: data.servings,
         prepTime: data.prepTime,
         cookTime: data.cookTime,
+        ingredients: data.ingredients,
+        instructions: data.instructions,
       };
     })
     .sort((a, b) => (a.date < b.date ? 1 : -1));

@@ -50,5 +50,16 @@ export const mdxComponents: MDXComponents = {
       </pre>
     );
   },
-  // Add more components as needed
+  table: ({ children }) => (
+    <div className="overflow-x-auto my-6">
+      <table className="w-full border-collapse text-sm">{children}</table>
+    </div>
+  ),
+  thead: ({ children }) => <thead className="border-b border-gray-700">{children}</thead>,
+  tbody: ({ children }) => <tbody>{children}</tbody>,
+  tr: ({ children }) => <tr className="border-b border-gray-800 hover:bg-gray-800/50 transition-colors">{children}</tr>,
+  th: ({ children }) => (
+    <th scope="col" className="px-4 py-2 text-left text-green-400 font-semibold whitespace-nowrap">{children}</th>
+  ),
+  td: ({ children }) => <td className="px-4 py-2 text-gray-300 align-top">{children}</td>,
 };
