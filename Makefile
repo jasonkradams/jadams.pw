@@ -4,6 +4,10 @@
 lint:
 	npx eslint . || exit 1
 
+.PHONY: type-check
+type-check:
+	npx tsgo --noEmit || exit 1
+
 .PHONY: build
 build:
 	npx next build || exit 1

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "type-check": "tsgo --noEmit"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
@@ -14,7 +15,6 @@
     "@next/mdx": "^16.1.6",
     "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/typography": "^0.5.19",
-    "@types/react-syntax-highlighter": "^15.5.13",
     "@vercel/analytics": "^1.6.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -35,6 +35,8 @@
     "@types/node": "^25",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/react-syntax-highlighter": "^15.5.13",
+    "@typescript/native-preview": "^7.0.0-dev.20260306.1",
     "eslint": "^9.39.2",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4.1.18",
