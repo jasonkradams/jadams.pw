@@ -73,13 +73,14 @@ export default async function Component() {
                 <CardContent>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {(post.tags || []).map((tag: string, tagIndex: number) => (
-                      <Badge
-                        key={tagIndex}
-                        variant="secondary"
-                        className="bg-gray-700 text-gray-300 hover:bg-green-500/20 hover:text-green-400"
-                      >
-                        {tag}
-                      </Badge>
+                      <Link key={tagIndex} href={`/posts?tag=${encodeURIComponent(tag)}`}>
+                        <Badge
+                          variant="secondary"
+                          className="bg-gray-700 text-gray-300 hover:bg-green-500/20 hover:text-green-400 cursor-pointer transition-colors"
+                        >
+                          {tag}
+                        </Badge>
+                      </Link>
                     ))}
                   </div>
                   <Link href={`/posts/${post.slug}`} className="text-green-400 hover:text-green-300 hover:underline">
