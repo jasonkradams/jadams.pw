@@ -33,6 +33,9 @@ export default function Footer() {
                 <Link href="/now" className="block text-gray-400 hover:text-green-400 transition-colors">
                   Now
                 </Link>
+                <Link href="/recipes" className="block text-gray-400 hover:text-green-400 transition-colors">
+                  Recipes
+                </Link>
                 <Link href="/rss" className="block text-gray-400 hover:text-green-400 transition-colors">
                   RSS Feed
                 </Link>
