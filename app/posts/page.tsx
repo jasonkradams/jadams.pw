@@ -6,6 +6,10 @@ import Footer from "@/components/Footer";
 
 import { getAllPosts } from './blog-index';
 
+export const metadata = {
+  title: "Posts",
+};
+
 const blogPosts = getAllPosts();
 
 export default function PostsPage() {

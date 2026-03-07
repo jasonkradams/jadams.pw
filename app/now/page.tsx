@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Briefcase, Heart, Users } from "lucide-react";
 
 export const metadata = {
-  title: "What I'm Doing Now | Jason Adams",
+  title: "Now",
   description: "Current activities, projects, and focus areas",
 };
 

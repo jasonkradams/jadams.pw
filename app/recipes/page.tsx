@@ -1,4 +1,9 @@
+import type { Metadata } from 'next';
 import { Suspense } from 'react';
+
+export const metadata: Metadata = {
+  title: "Recipes",
+};
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RecipeList from './RecipeList';

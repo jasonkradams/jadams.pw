@@ -13,6 +13,12 @@ export async function generateStaticParams() {
   return getAllPosts().map(post => ({ slug: post.slug }));
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = getAllPosts().find(p => p.slug === slug);
+  return { title: post?.title ?? slug };
+}
+
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   // In Next.js 15, params is a Promise that needs to be awaited
   const { slug } = await params;

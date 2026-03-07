@@ -17,6 +17,12 @@ export async function generateStaticParams() {
   return getAllRecipes().map(recipe => ({ slug: recipe.slug }));
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const recipe = getAllRecipes().find(r => r.slug === slug);
+  return { title: recipe?.title ?? slug };
+}
+
 /** Convert ISO 8601 duration (e.g. "PT1H30M") to a readable string ("1h 30min") */
 function formatDuration(iso: string): string {
   const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?/);
