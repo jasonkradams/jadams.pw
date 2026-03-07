@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import Link from 'next/link';
@@ -17,7 +18,7 @@ export async function generateStaticParams() {
   return getAllRecipes().map(recipe => ({ slug: recipe.slug }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const recipe = getAllRecipes().find(r => r.slug === slug);
   return { title: recipe?.title ?? slug };
