@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SiGithub } from "react-icons/si";
+import Logo from "./Logo";
 
 export default function Header() {
   const pathname = usePathname();
@@ -10,14 +11,9 @@ export default function Header() {
     <header className="border-b border-gray-800 bg-gray-950/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
         <nav className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-green-500 rounded-sm flex items-center justify-center">
-                <span className="text-gray-950 font-bold text-sm">{"</>"}</span>
-              </div>
-              <span className="text-xl font-bold text-green-400">jadams.pw</span>
-            </Link>
-          </div>
+          <Link href="/">
+            <Logo />
+          </Link>
           <div className="hidden md:flex items-center space-x-8">
             <Link href="/#home" className="text-gray-300 hover:text-green-400 transition-colors">
               ~/home

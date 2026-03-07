@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Mail } from "lucide-react"
 import { SiGithub, SiLinkedin } from "react-icons/si"
+import Logo from "./Logo"
 
 export default function Footer() {
   return (
@@ -8,11 +9,8 @@ export default function Footer() {
       <div className="container mx-auto max-w-6xl">
         <div className="grid md:grid-cols-3 gap-8">
           <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-green-500 rounded-sm flex items-center justify-center">
-                <span className="text-gray-950 font-bold text-sm">{"</>"}</span>
-              </div>
-              <span className="text-xl font-bold text-green-400">jadams.pw</span>
+            <div className="mb-4">
+              <Logo />
             </div>
             <p className="text-gray-400 leading-relaxed">
               Sharing knowledge and building the future of web development, one post at a time.
