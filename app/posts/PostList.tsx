@@ -46,7 +46,7 @@ export default function PostList({ posts }: { posts: BlogPostMeta[] }) {
                 {post.readTime && <span className="ml-2">{post.readTime}</span>}
               </div>
               <CardTitle className="text-gray-100 group-hover:text-green-400 transition-colors">
-                {post.title}
+                <Link href={`/posts/${post.slug}`}>{post.title}</Link>
               </CardTitle>
               <CardDescription className="text-gray-400 leading-relaxed">{post.excerpt}</CardDescription>
             </CardHeader>

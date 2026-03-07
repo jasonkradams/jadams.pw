@@ -57,7 +57,7 @@ export default function RecipeList({ recipes }: { recipes: RecipeMeta[] }) {
                 )}
               </div>
               <CardTitle className="text-gray-100 group-hover:text-green-400 transition-colors">
-                {recipe.title}
+                <Link href={`/recipes/${recipe.slug}`}>{recipe.title}</Link>
               </CardTitle>
               <CardDescription className="text-gray-400 leading-relaxed">{recipe.excerpt}</CardDescription>
             </CardHeader>
