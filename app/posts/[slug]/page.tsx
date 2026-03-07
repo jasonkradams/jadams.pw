@@ -5,10 +5,10 @@ import { notFound } from 'next/navigation';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
 
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+import Header from '@/app/components/Header';
+import Footer from '@/app/components/Footer';
 import { getAllPosts } from '../blog-index';
-import { mdxComponents } from '../../components/mdx-components';
+import { mdxComponents } from '@/app/components/mdx-components';
 
 export async function generateStaticParams() {
   return getAllPosts().map(post => ({ slug: post.slug }));
@@ -21,18 +21,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
-  // In Next.js 15, params is a Promise that needs to be awaited
   const { slug } = await params;
   const postPath = path.join(process.cwd(), 'app/posts', `${slug}.mdx`);
-  
+
   if (!fs.existsSync(postPath)) return notFound();
 
-  let source: string;
   let frontmatter: Record<string, unknown>;
   let mdxSource: Awaited<ReturnType<typeof compileMDX>>;
 
   try {
-    source = fs.readFileSync(postPath, 'utf-8');
+    const source = fs.readFileSync(postPath, 'utf-8');
     const parsed = matter(source);
     frontmatter = parsed.data;
     mdxSource = await compileMDX({

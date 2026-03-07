@@ -8,10 +8,8 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { getAllPosts, type BlogPostMeta } from "./posts/blog-index";
 
-export default async function Component() {
-  const blogPosts: BlogPostMeta[] = getAllPosts()
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 3);
+export default async function HomePage() {
+  const blogPosts = getAllPosts().slice(0, 3);
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 font-mono">
@@ -58,8 +56,8 @@ export default async function Component() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {blogPosts.map((post: BlogPostMeta, index: number) => (
-              <Card key={index} className="bg-gray-800 border-gray-700 hover:border-green-500/50 transition-all duration-300 group">
+            {blogPosts.map((post) => (
+              <Card key={post.slug} className="bg-gray-800 border-gray-700 hover:border-green-500/50 transition-all duration-300 group">
                 <CardHeader>
                   <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
                     <span>{new Date(post.date).toLocaleDateString()}</span>
@@ -72,8 +70,8 @@ export default async function Component() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {(post.tags || []).map((tag: string, tagIndex: number) => (
-                      <Link key={tagIndex} href={`/posts?tag=${encodeURIComponent(tag)}`}>
+                    {(post.tags || []).map((tag: string) => (
+                      <Link key={tag} href={`/posts?tag=${encodeURIComponent(tag)}`}>
                         <Badge
                           variant="secondary"
                           className="bg-gray-700 text-gray-300 hover:bg-green-500/20 hover:text-green-400 cursor-pointer transition-colors"

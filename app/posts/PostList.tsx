@@ -38,8 +38,8 @@ export default function PostList({ posts }: { posts: BlogPostMeta[] }) {
       )}
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {filtered.map((post, index) => (
-          <Card key={index} className="bg-gray-800 border-gray-700 hover:border-green-500/50 transition-all duration-300 group">
+        {filtered.map((post) => (
+          <Card key={post.slug} className="bg-gray-800 border-gray-700 hover:border-green-500/50 transition-all duration-300 group">
             <CardHeader>
               <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
                 <span>{new Date(post.date).toLocaleDateString()}</span>
@@ -52,8 +52,8 @@ export default function PostList({ posts }: { posts: BlogPostMeta[] }) {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2 mb-4">
-                {(post.tags || []).map((tag, tagIndex) => (
-                  <Link key={tagIndex} href={buildTagUrl('/posts', activeTags, tag)}>
+                {(post.tags || []).map((tag) => (
+                  <Link key={tag} href={buildTagUrl('/posts', activeTags, tag)}>
                     <Badge
                       variant="secondary"
                       className={`cursor-pointer transition-colors ${

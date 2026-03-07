@@ -11,16 +11,18 @@ export const mdxComponents: MDXComponents = {
   ul: ({ children }) => <ul className="list-disc pl-6 my-4 space-y-2">{children}</ul>,
   ol: ({ children }) => <ol className="list-decimal pl-6 my-4 space-y-2">{children}</ol>,
   li: ({ children }) => <li className="my-1">{children}</li>,
-  a: ({ children, href }) => (
-    <a 
-      href={href} 
-      className="text-green-400 hover:underline hover:text-green-300 transition-colors"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {children}
-    </a>
-  ),
+  a: ({ children, href }) => {
+    const isExternal = href?.startsWith('http');
+    return (
+      <a
+        href={href}
+        className="text-green-400 hover:underline hover:text-green-300 transition-colors"
+        {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      >
+        {children}
+      </a>
+    );
+  },
   // Inline code (not in pre blocks)
   code: ({ children, className, ...props }) => {
     // If it's part of a pre block (syntax highlighted), use our CodeBlock component

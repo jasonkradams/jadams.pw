@@ -38,8 +38,8 @@ export default function RecipeList({ recipes }: { recipes: RecipeMeta[] }) {
       )}
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {filtered.map((recipe, index) => (
-          <Card key={index} className="bg-gray-800 border-gray-700 hover:border-green-500/50 transition-all duration-300 group">
+        {filtered.map((recipe) => (
+          <Card key={recipe.slug} className="bg-gray-800 border-gray-700 hover:border-green-500/50 transition-all duration-300 group">
             <CardHeader>
               <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
                 {recipe.prepTime && <span>Prep: {formatDuration(recipe.prepTime)}</span>}
@@ -55,8 +55,8 @@ export default function RecipeList({ recipes }: { recipes: RecipeMeta[] }) {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2 mb-4">
-                {(recipe.tags || []).map((tag, tagIndex) => (
-                  <Link key={tagIndex} href={buildTagUrl('/recipes', activeTags, tag)}>
+                {(recipe.tags || []).map((tag) => (
+                  <Link key={tag} href={buildTagUrl('/recipes', activeTags, tag)}>
                     <Badge
                       variant="secondary"
                       className={`cursor-pointer transition-colors ${

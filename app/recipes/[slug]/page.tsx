@@ -7,11 +7,11 @@ import { compileMDX } from 'next-mdx-remote/rsc';
 import Link from 'next/link';
 import remarkGfm from 'remark-gfm';
 
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
-import RecipeViewer from '../../components/RecipeViewer';
+import Header from '@/app/components/Header';
+import Footer from '@/app/components/Footer';
+import RecipeViewer from '@/app/components/RecipeViewer';
 import { getAllRecipes } from '../recipes-index';
-import { mdxComponents } from '../../components/mdx-components';
+import { mdxComponents } from '@/app/components/mdx-components';
 import { Badge } from '@/components/ui/badge';
 import { formatDuration } from '@/lib/utils';
 
@@ -157,8 +157,8 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
           )}
           {Array.isArray(frontmatter.tags) && (frontmatter.tags as string[]).length > 0 && (
             <div className="flex flex-wrap gap-2 mb-8">
-              {(frontmatter.tags as string[]).map((tag, i) => (
-                <Link key={i} href={`/recipes?tag=${encodeURIComponent(tag)}`}>
+              {(frontmatter.tags as string[]).map((tag) => (
+                <Link key={tag} href={`/recipes?tag=${encodeURIComponent(tag)}`}>
                   <Badge
                     variant="secondary"
                     className="bg-gray-700 text-gray-300 hover:bg-green-500/20 hover:text-green-400 cursor-pointer transition-colors"
