@@ -10,7 +10,7 @@ import remarkGfm from 'remark-gfm';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import RecipeViewer from '@/app/components/RecipeViewer';
-import { getAllRecipes } from '../recipes-index';
+import { getAllRecipes, type StructuredIngredient } from '../recipes-index';
 import { mdxComponents } from '@/app/components/mdx-components';
 import { Badge } from '@/components/ui/badge';
 import { formatDuration } from '@/lib/utils';
@@ -34,24 +34,44 @@ function toGoVarName(title: string): string {
     .replace(/[^a-zA-Z0-9]/g, '');
 }
 
-function goStringSlice(items: string[]): string {
-  if (items.length === 0) return '[]string{}';
-  const inner = items.map(s => `\t\t"${s.replace(/"/g, '\\"')}",`).join('\n');
-  return `[]string{\n${inner}\n\t}`;
+
+function goIngredientSlice(ingredients: StructuredIngredient[]): string {
+  if (ingredients.length === 0) return '[]Ingredient{}';
+  const inner = ingredients.map(ing => {
+    const qty = Number.isInteger(ing.quantity) ? `${ing.quantity}` : `${ing.quantity}`;
+    const note = ing.note ? `, Note: "${ing.note.replace(/"/g, '\\"')}"` : '';
+    const meas = ing.measurement ? `"${ing.measurement.replace(/"/g, '\\"')}"` : '""';
+    return `\t\t{Quantity: ${qty}, Measurement: ${meas}, Product: "${ing.product.replace(/"/g, '\\"')}"${note}},`;
+  }).join('\n');
+  return `[]Ingredient{\n${inner}\n\t}`;
 }
 
-function buildGoString(fm: Record<string, unknown>): string {
+function buildGoString(fm: Record<string, unknown>, ingredients: StructuredIngredient[]): string {
   const varName = toGoVarName((fm.title as string) || 'Recipe');
-  const ingredients = Array.isArray(fm.ingredients) ? (fm.ingredients as string[]) : [];
   const instructions = Array.isArray(fm.instructions) ? (fm.instructions as string[]) : [];
   const tags = Array.isArray(fm.tags) ? (fm.tags as string[]) : [];
 
   const tagLiteral = tags.length === 0
-    ? '[]string{}'
-    : `[]string{${tags.map(t => `"${t}"`).join(', ')}}`;
+    ? '[]Tag{}'
+    : `[]Tag{${tags.map(t => `"${t}"`).join(', ')}}`;
+
+  const instructionLiteral = instructions.length === 0
+    ? '[]Step{}'
+    : `[]Step{\n${instructions.map(s => `\t\t"${s.replace(/"/g, '\\"')}",`).join('\n')}\n\t}`;
 
   return [
     'package recipes',
+    '',
+    'type Tag string',
+    '',
+    'type Ingredient struct {',
+    '\tQuantity    float64',
+    '\tMeasurement string',
+    '\tProduct     string',
+    '\tNote        string',
+    '}',
+    '',
+    'type Step string',
     '',
     'type Recipe struct {',
     '\tTitle        string',
@@ -59,9 +79,9 @@ function buildGoString(fm: Record<string, unknown>): string {
     '\tCookTime     string',
     '\tServings     int',
     '\tDifficulty   string',
-    '\tTags         []string',
-    '\tIngredients  []string',
-    '\tInstructions []string',
+    '\tTags         []Tag',
+    '\tIngredients  []Ingredient',
+    '\tInstructions []Step',
     '}',
     '',
     `var ${varName} = Recipe{`,
@@ -71,8 +91,8 @@ function buildGoString(fm: Record<string, unknown>): string {
     `\tServings:   ${fm.servings || 0},`,
     `\tDifficulty: "${fm.difficulty || ''}",`,
     `\tTags:       ${tagLiteral},`,
-    `\tIngredients: ${goStringSlice(ingredients)},`,
-    `\tInstructions: ${goStringSlice(instructions)},`,
+    `\tIngredients: ${goIngredientSlice(ingredients)},`,
+    `\tInstructions: ${instructionLiteral},`,
     '}',
   ].join('\n');
 }
@@ -114,6 +134,10 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
     frontmatter.difficulty ? `Difficulty: ${frontmatter.difficulty}` : null,
   ].filter(Boolean);
 
+  const ingredients: StructuredIngredient[] = Array.isArray(frontmatter.ingredients)
+    ? (frontmatter.ingredients as StructuredIngredient[])
+    : [];
+
   const jsonLd = {
     '@context': 'https://schema.org/',
     '@type': 'Recipe',
@@ -124,13 +148,15 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
     cookTime: cookTime || undefined,
     recipeYield: frontmatter.servings ? `${frontmatter.servings} servings` : undefined,
     keywords: Array.isArray(frontmatter.tags) ? (frontmatter.tags as string[]).join(', ') : undefined,
-    recipeIngredient: Array.isArray(frontmatter.ingredients) ? frontmatter.ingredients : undefined,
+    recipeIngredient: ingredients.map(ing =>
+      [ing.quantity, ing.measurement, ing.product, ing.note].filter(Boolean).join(' ')
+    ),
     recipeInstructions: Array.isArray(frontmatter.instructions)
       ? (frontmatter.instructions as string[]).map(text => ({ '@type': 'HowToStep', text }))
       : undefined,
   };
 
-  const codeString = buildGoString(frontmatter);
+  const codeString = buildGoString(frontmatter, ingredients);
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
@@ -169,7 +195,7 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
               ))}
             </div>
           )}
-          <RecipeViewer codeString={codeString}>
+          <RecipeViewer codeString={codeString} ingredients={ingredients}>
             {mdxSource.content}
           </RecipeViewer>
         </div>

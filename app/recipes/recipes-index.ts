@@ -2,6 +2,13 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
+export interface StructuredIngredient {
+  quantity: number;
+  measurement: string;
+  product: string;
+  note?: string;
+}
+
 export interface RecipeMeta {
   slug: string;
   title: string;
@@ -12,7 +19,7 @@ export interface RecipeMeta {
   servings?: number;
   prepTime?: string;
   cookTime?: string;
-  ingredients?: string[];
+  ingredients?: StructuredIngredient[];
   instructions?: string[];
 }
 
