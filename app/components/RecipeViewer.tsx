@@ -14,11 +14,13 @@ const SCALES = [1, 1.5, 2, 3] as const;
 type Scale = typeof SCALES[number];
 
 const FRACTIONS: Record<number, string> = {
+  0.13: '⅛',
   0.25: '¼',
   0.33: '⅓',
   0.5: '½',
   0.67: '⅔',
   0.75: '¾',
+  0.88: '⅞',
 };
 
 function formatQuantity(value: number): string {
@@ -30,6 +32,62 @@ function formatQuantity(value: number): string {
   if (whole === 0) return fracStr || value.toString();
   if (!fracStr) return whole.toString();
   return `${whole}${fracStr}`;
+}
+
+// Normalize measurement aliases to canonical forms
+const UNIT_ALIASES: Record<string, string> = {
+  teaspoon: 'tsp', teaspoons: 'tsp',
+  tablespoon: 'tbsp', tablespoons: 'tbsp',
+  cups: 'cup',
+  'fluid ounce': 'fl oz', 'fluid ounces': 'fl oz', floz: 'fl oz',
+  ounce: 'oz', ounces: 'oz',
+  pound: 'lb', pounds: 'lb', lbs: 'lb',
+};
+
+// Ordered conversion steps: only fires when qty >= minQty AND result is a clean fraction
+const CONVERSION_STEPS: Array<{ from: string; minQty: number; to: string; factor: number }> = [
+  { from: 'tsp',   minQty: 3,  to: 'tbsp', factor: 3 },
+  { from: 'tbsp',  minQty: 4,  to: 'cup',  factor: 16 },
+  { from: 'fl oz', minQty: 8,  to: 'cup',  factor: 8 },
+  { from: 'oz',    minQty: 16, to: 'lb',   factor: 16 },
+];
+
+// Clean cooking fractions: values a fractional part must be near to allow conversion
+const CLEAN_FRACTIONS = [0, 0.125, 0.25, 1 / 3, 0.5, 2 / 3, 0.75, 0.875];
+const EPSILON = 0.02;
+
+function isCleanFraction(value: number): boolean {
+  const frac = value - Math.floor(value);
+  return CLEAN_FRACTIONS.some(cf => Math.abs(frac - cf) < EPSILON);
+}
+
+function convertUnit(quantity: number, measurement: string): { quantity: number; measurement: string } {
+  const unit = UNIT_ALIASES[measurement.toLowerCase()] ?? measurement.toLowerCase();
+  let qty = quantity;
+  let meas = unit;
+
+  // Walk the chain repeatedly to allow multi-step conversions (e.g. tsp → tbsp → cup)
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const step of CONVERSION_STEPS) {
+      if (meas === step.from && qty >= step.minQty) {
+        const candidate = qty / step.factor;
+        if (isCleanFraction(candidate)) {
+          qty = candidate;
+          meas = step.to;
+          changed = true;
+          break; // restart chain from new unit
+        }
+      }
+    }
+  }
+
+  // Preserve original casing/form if no conversion happened
+  if (meas === (UNIT_ALIASES[measurement.toLowerCase()] ?? measurement.toLowerCase()) && qty === quantity) {
+    return { quantity, measurement };
+  }
+  return { quantity: qty, measurement: meas };
 }
 
 export default function RecipeViewer({ codeString, ingredients, children }: RecipeViewerProps) {
@@ -100,8 +158,9 @@ export default function RecipeViewer({ codeString, ingredients, children }: Reci
                   <tbody>
                     {ingredients.map((ing, i) => {
                       const scaled = ing.quantity * scale;
-                      const qty = formatQuantity(scaled);
-                      const quantity = [qty, ing.measurement].filter(p => p && p.trim()).join(' ');
+                      const { quantity: convertedQty, measurement: convertedUnit } = convertUnit(scaled, ing.measurement);
+                      const qty = formatQuantity(convertedQty);
+                      const quantity = [qty, convertedUnit].filter(p => p && p.trim()).join(' ');
                       return (
                         <tr key={i} className="border-b border-gray-800 hover:bg-gray-800/50 transition-colors">
                           <td className="px-4 py-2 text-gray-300 align-top"><strong>{quantity}</strong></td>
