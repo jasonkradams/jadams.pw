@@ -1,13 +1,19 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import CodeBlock from './CodeBlock';
-import type { StructuredIngredient } from '@/app/recipes/recipes-index';
+import type { StructuredIngredient, StructuredStep, NutritionRow } from '@/app/recipes/recipes-index';
 
 interface RecipeViewerProps {
   codeString: string;
+  description?: string;
+  image?: string;
+  equipment: string[];
   ingredients: StructuredIngredient[];
-  children: React.ReactNode;
+  instructions: StructuredStep[];
+  tips: string[];
+  nutrition: NutritionRow[];
 }
 
 const SCALES = [1, 1.5, 2, 3] as const;
@@ -90,7 +96,16 @@ function convertUnit(quantity: number, measurement: string): { quantity: number;
   return { quantity: qty, measurement: meas };
 }
 
-export default function RecipeViewer({ codeString, ingredients, children }: RecipeViewerProps) {
+export default function RecipeViewer({
+  codeString,
+  description,
+  image,
+  equipment,
+  ingredients,
+  instructions,
+  tips,
+  nutrition,
+}: RecipeViewerProps) {
   const [view, setView] = useState<'prose' | 'code'>('prose');
   const [scale, setScale] = useState<Scale>(1);
 
@@ -143,6 +158,18 @@ export default function RecipeViewer({ codeString, ingredients, children }: Reci
 
       {view === 'prose' ? (
         <article className="prose prose-invert max-w-none">
+          {description && (
+            <p className="text-gray-300 leading-relaxed mb-6">{description}</p>
+          )}
+
+          {image && (
+            <div className="relative w-full aspect-video mb-6 rounded overflow-hidden">
+              <Image src={image} alt="" fill className="object-cover" />
+            </div>
+          )}
+
+          {(description || image) && <hr className="border-gray-800 my-6" />}
+
           {ingredients.length > 0 && (
             <>
               <h2 className="text-2xl font-bold my-5 text-green-400">Ingredients</h2>
@@ -172,10 +199,74 @@ export default function RecipeViewer({ codeString, ingredients, children }: Reci
                   </tbody>
                 </table>
               </div>
-              <hr />
+              <hr className="border-gray-800 my-6" />
             </>
           )}
-          {children}
+
+          {equipment.length > 0 && (
+            <>
+              <h2 className="text-2xl font-bold my-5 text-green-400">Equipment</h2>
+              <ul className="my-4 pl-6 list-disc text-gray-300">
+                {equipment.map((item, i) => (
+                  <li key={i} className="my-1">{item}</li>
+                ))}
+              </ul>
+              <hr className="border-gray-800 my-6" />
+            </>
+          )}
+
+          {instructions.length > 0 && (
+            <>
+              <h2 className="text-2xl font-bold my-5 text-green-400">Instructions</h2>
+              {instructions.map((step, i) => (
+                <div key={i} className="mb-6">
+                  <p className="font-bold text-gray-100 mb-2">
+                    {i + 1}. {step.title ?? step.instruction}
+                  </p>
+                  {step.title && (
+                    <p className="text-gray-300 leading-relaxed">{step.instruction}</p>
+                  )}
+                </div>
+              ))}
+            </>
+          )}
+
+          {tips.length > 0 && (
+            <>
+              <hr className="border-gray-800 my-6" />
+              <h2 className="text-2xl font-bold my-5 text-green-400">Tips</h2>
+              <ul className="my-4 pl-6 list-disc text-gray-300">
+                {tips.map((tip, i) => (
+                  <li key={i} className="my-1">{tip}</li>
+                ))}
+              </ul>
+            </>
+          )}
+
+          {nutrition.length > 0 && (
+            <>
+              <hr className="border-gray-800 my-6" />
+              <h2 className="text-2xl font-bold my-5 text-green-400">Nutrition (per serving)</h2>
+              <div className="overflow-x-auto my-6">
+                <table className="w-full border-collapse text-sm">
+                  <thead className="border-b border-gray-700">
+                    <tr className="border-b border-gray-800">
+                      <th scope="col" className="px-4 py-2 text-left text-green-400 font-semibold whitespace-nowrap">Nutrient</th>
+                      <th scope="col" className="px-4 py-2 text-left text-green-400 font-semibold whitespace-nowrap">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {nutrition.map((row, i) => (
+                      <tr key={i} className="border-b border-gray-800 hover:bg-gray-800/50 transition-colors">
+                        <td className="px-4 py-2 text-gray-300 align-top">{row.nutrient}</td>
+                        <td className="px-4 py-2 text-gray-300 align-top">{row.amount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
         </article>
       ) : (
         <CodeBlock className="language-go">{codeString}</CodeBlock>

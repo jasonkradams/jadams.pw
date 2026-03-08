@@ -3,15 +3,12 @@ import path from 'path';
 import matter from 'gray-matter';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { compileMDX } from 'next-mdx-remote/rsc';
 import Link from 'next/link';
-import remarkGfm from 'remark-gfm';
 
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import RecipeViewer from '@/app/components/RecipeViewer';
-import { getAllRecipes, type StructuredIngredient } from '../recipes-index';
-import { mdxComponents } from '@/app/components/mdx-components';
+import { getAllRecipes, type StructuredIngredient, type StructuredStep, type NutritionRow } from '../recipes-index';
 import { Badge } from '@/components/ui/badge';
 import { formatDuration } from '@/lib/utils';
 
@@ -34,30 +31,44 @@ function toGoVarName(title: string): string {
     .replace(/[^a-zA-Z0-9]/g, '');
 }
 
+function goStringSlice(label: string, items: string[]): string {
+  if (items.length === 0) return `[]${label}{}`;
+  const inner = items.map(s => `\t\t"${s.replace(/"/g, '\\"')}",`).join('\n');
+  return `[]${label}{\n${inner}\n\t}`;
+}
 
 function goIngredientSlice(ingredients: StructuredIngredient[]): string {
   if (ingredients.length === 0) return '[]Ingredient{}';
   const inner = ingredients.map(ing => {
-    const qty = Number.isInteger(ing.quantity) ? `${ing.quantity}` : `${ing.quantity}`;
     const note = ing.note ? `, Note: "${ing.note.replace(/"/g, '\\"')}"` : '';
     const meas = ing.measurement ? `"${ing.measurement.replace(/"/g, '\\"')}"` : '""';
-    return `\t\t{Quantity: ${qty}, Measurement: ${meas}, Product: "${ing.product.replace(/"/g, '\\"')}"${note}},`;
+    return `\t\t{Quantity: ${ing.quantity}, Measurement: ${meas}, Product: "${ing.product.replace(/"/g, '\\"')}"${note}},`;
   }).join('\n');
   return `[]Ingredient{\n${inner}\n\t}`;
 }
 
-function buildGoString(fm: Record<string, unknown>, ingredients: StructuredIngredient[]): string {
+function goStepSlice(steps: StructuredStep[]): string {
+  if (steps.length === 0) return '[]Step{}';
+  const inner = steps.map(s => {
+    const title = (s.title ?? '').replace(/"/g, '\\"');
+    const instruction = s.instruction.replace(/"/g, '\\"');
+    return `\t\t{Title: "${title}", Instruction: "${instruction}"},`;
+  }).join('\n');
+  return `[]Step{\n${inner}\n\t}`;
+}
+
+function buildGoString(fm: Record<string, unknown>, ingredients: StructuredIngredient[], steps: StructuredStep[]): string {
   const varName = toGoVarName((fm.title as string) || 'Recipe');
-  const instructions = Array.isArray(fm.instructions) ? (fm.instructions as string[]) : [];
   const tags = Array.isArray(fm.tags) ? (fm.tags as string[]) : [];
+  const equipment = Array.isArray(fm.equipment) ? (fm.equipment as string[]) : [];
+  const tips = Array.isArray(fm.tips) ? (fm.tips as string[]) : [];
 
-  const tagLiteral = tags.length === 0
-    ? '[]Tag{}'
-    : `[]Tag{${tags.map(t => `"${t}"`).join(', ')}}`;
-
-  const instructionLiteral = instructions.length === 0
-    ? '[]Step{}'
-    : `[]Step{\n${instructions.map(s => `\t\t"${s.replace(/"/g, '\\"')}",`).join('\n')}\n\t}`;
+  const equipmentField = equipment.length > 0
+    ? `\n\tEquipment:    ${goStringSlice('string', equipment)},`
+    : '';
+  const tipsField = tips.length > 0
+    ? `\n\tTips:         ${goStringSlice('string', tips)},`
+    : '';
 
   return [
     'package recipes',
@@ -71,29 +82,38 @@ function buildGoString(fm: Record<string, unknown>, ingredients: StructuredIngre
     '\tNote        string',
     '}',
     '',
-    'type Step string',
+    'type Step struct {',
+    '\tTitle       string',
+    '\tInstruction string',
+    '}',
     '',
     'type Recipe struct {',
     '\tTitle        string',
+    '\tDescription  string',
+    '\tImage        string',
     '\tPrepTime     string',
     '\tCookTime     string',
     '\tServings     int',
     '\tDifficulty   string',
     '\tTags         []Tag',
+    '\tEquipment    []string',
     '\tIngredients  []Ingredient',
     '\tInstructions []Step',
+    '\tTips         []string',
     '}',
     '',
     `var ${varName} = Recipe{`,
-    `\tTitle:      "${(fm.title as string || '').replace(/"/g, '\\"')}",`,
-    `\tPrepTime:   "${fm.prepTime || ''}",`,
-    `\tCookTime:   "${fm.cookTime || ''}",`,
-    `\tServings:   ${fm.servings || 0},`,
-    `\tDifficulty: "${fm.difficulty || ''}",`,
-    `\tTags:       ${tagLiteral},`,
-    `\tIngredients: ${goIngredientSlice(ingredients)},`,
-    `\tInstructions: ${instructionLiteral},`,
-    '}',
+    `\tTitle:        "${(fm.title as string || '').replace(/"/g, '\\"')}",`,
+    `\tDescription:  "${((fm.description as string) || '').replace(/"/g, '\\"')}",`,
+    `\tImage:        "${(fm.image as string) || ''}",`,
+    `\tPrepTime:     "${fm.prepTime || ''}",`,
+    `\tCookTime:     "${fm.cookTime || ''}",`,
+    `\tServings:     ${fm.servings || 0},`,
+    `\tDifficulty:   "${fm.difficulty || ''}",`,
+    `\tTags:         ${goStringSlice('Tag', tags)},`,
+    `${equipmentField ? equipmentField + '\n' : ''}\tIngredients:  ${goIngredientSlice(ingredients)},`,
+    `\tInstructions: ${goStepSlice(steps)},`,
+    `${tipsField ? tipsField + '\n' : ''}` + '}',
   ].join('\n');
 }
 
@@ -103,22 +123,8 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
 
   if (!fs.existsSync(recipePath)) return notFound();
 
-  let frontmatter: Record<string, unknown>;
-  let mdxSource: Awaited<ReturnType<typeof compileMDX>>;
-
-  try {
-    const source = fs.readFileSync(recipePath, 'utf-8');
-    const parsed = matter(source);
-    frontmatter = parsed.data;
-    mdxSource = await compileMDX({
-      source: parsed.content,
-      components: mdxComponents,
-      options: { mdxOptions: { remarkPlugins: [remarkGfm] } },
-    });
-  } catch (error) {
-    console.error('Error loading recipe:', error);
-    return notFound();
-  }
+  const source = fs.readFileSync(recipePath, 'utf-8');
+  const { data: frontmatter } = matter(source);
 
   const formattedDate = frontmatter.date
     ? new Date(frontmatter.date as string).toISOString().slice(0, 10)
@@ -138,11 +144,15 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
     ? (frontmatter.ingredients as StructuredIngredient[])
     : [];
 
+  const instructions: StructuredStep[] = Array.isArray(frontmatter.instructions)
+    ? (frontmatter.instructions as StructuredStep[])
+    : [];
+
   const jsonLd = {
     '@context': 'https://schema.org/',
     '@type': 'Recipe',
     name: frontmatter.title,
-    description: frontmatter.excerpt,
+    description: frontmatter.description || frontmatter.excerpt,
     datePublished: formattedDate || undefined,
     prepTime: prepTime || undefined,
     cookTime: cookTime || undefined,
@@ -151,12 +161,14 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
     recipeIngredient: ingredients.map(ing =>
       [ing.quantity, ing.measurement, ing.product, ing.note].filter(Boolean).join(' ')
     ),
-    recipeInstructions: Array.isArray(frontmatter.instructions)
-      ? (frontmatter.instructions as string[]).map(text => ({ '@type': 'HowToStep', text }))
-      : undefined,
+    recipeInstructions: instructions.map(s => ({
+      '@type': 'HowToStep',
+      name: s.title ?? undefined,
+      text: s.instruction,
+    })),
   };
 
-  const codeString = buildGoString(frontmatter, ingredients);
+  const codeString = buildGoString(frontmatter, ingredients, instructions);
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
@@ -195,9 +207,16 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
               ))}
             </div>
           )}
-          <RecipeViewer codeString={codeString} ingredients={ingredients}>
-            {mdxSource.content}
-          </RecipeViewer>
+          <RecipeViewer
+            codeString={codeString}
+            description={frontmatter.description as string | undefined}
+            image={frontmatter.image as string | undefined}
+            equipment={Array.isArray(frontmatter.equipment) ? (frontmatter.equipment as string[]) : []}
+            ingredients={ingredients}
+            instructions={instructions}
+            tips={Array.isArray(frontmatter.tips) ? (frontmatter.tips as string[]) : []}
+            nutrition={Array.isArray(frontmatter.nutrition) ? (frontmatter.nutrition as NutritionRow[]) : []}
+          />
         </div>
       </main>
       <Footer />
