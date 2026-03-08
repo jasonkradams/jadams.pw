@@ -179,7 +179,7 @@ export default function RecipeViewer({
                     <tr className="border-b border-gray-800">
                       <th scope="col" className="px-4 py-2 text-left text-green-400 font-semibold whitespace-nowrap">Quantity</th>
                       <th scope="col" className="px-4 py-2 text-left text-green-400 font-semibold whitespace-nowrap">Ingredient</th>
-                      <th scope="col" className="px-4 py-2 text-left text-green-400 font-semibold whitespace-nowrap">Notes</th>
+                      <th scope="col" className="px-4 py-2 text-left text-green-400 font-semibold whitespace-nowrap">Note</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -191,7 +191,7 @@ export default function RecipeViewer({
                       return (
                         <tr key={i} className="border-b border-gray-800 hover:bg-gray-800/50 transition-colors">
                           <td className="px-4 py-2 text-gray-300 align-top"><strong>{quantity}</strong></td>
-                          <td className="px-4 py-2 text-gray-300 align-top">{ing.product}</td>
+                          <td className="px-4 py-2 text-gray-300 align-top">{ing.product.charAt(0).toUpperCase() + ing.product.slice(1)}</td>
                           <td className="px-4 py-2 text-gray-300 align-top">{ing.note ?? ''}</td>
                         </tr>
                       );
